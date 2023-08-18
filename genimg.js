@@ -1,26 +1,29 @@
+/* eslint-disable consistent-this */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-extend-native */
 const path = require('path');
 const fs = require('fs');
 const chalk = require('chalk');
 const argv = require('yargs-parser')(process.argv.slice(2));
 //$FlowFixMe
 String.prototype.format = function () {
-  let a = this;
-  for (let k in arguments) {
-    //$FlowFixMe
-    a = a.replace(('{' + k + '}').toRegex('g'), arguments[k]);
-  }
-  return a;
+    let a = this;
+    for (let k in arguments) {
+        //$FlowFixMe
+        a = a.replace(('{' + k + '}').toRegex('g'), arguments[k]);
+    }
+    return a;
 };
 //$FlowFixMe
 String.prototype.toRegex = function (option = 'i') {
-  let regexStr = this.replace(/[\.\*\+\?\^\$\{\}\(\)\|\[\]\\]/g, '\\$&');
-  regexStr = regexStr.replace(/\s/g, '\\s?');
-  // console.log('regex: {0}'.format(regexStr))
-  return new RegExp(regexStr, option);
+    let regexStr = this.replace(/[\.\*\+\?\^\$\{\}\(\)\|\[\]\\]/g, '\\$&');
+    regexStr = regexStr.replace(/\s/g, '\\s?');
+    // console.log('regex: {0}'.format(regexStr))
+    return new RegExp(regexStr, option);
 };
 const getFileName = file => {
-  var fileNameMatch = file.match(/^(.+)\.[^\.]+$/);
-  return fileNameMatch && fileNameMatch[1].replace(/[\s-\+]+/g, '_');
+    var fileNameMatch = file.match(/^(.+)\.[^\.]+$/);
+    return fileNameMatch && fileNameMatch[1].replace(/[\s-\+]+/g, '_');
 };
 
 // console.log(argv)
@@ -51,26 +54,30 @@ export default {0}`;
 let moduleName = argv.name || getFileName(outputName);
 // console.log('moduleName', moduleName)
 fs.readdir(folder, (err, files) => {
-  if (err) {
-    return console.error(err);
-  }
-  var strCodes = [];
-  files.forEach(file => {
-    if (file.match(/@\dx\.(png|jpg)/)) {
-      return;
+    if (err) {
+        return console.error(err);
     }
-    var fileName = getFileName(file);
+    var strCodes = [];
+    files.forEach(file => {
+        if (file.match(/@\dx\.(png|jpg)/)) {
+            return;
+        }
+        var fileName = getFileName(file);
 
-    if (fileName) {
-      //$FlowFixMe
-      strCodes.push(
-        "    {0}: require('{1}/{2}'),".format(fileName, requirePath, file),
-      );
-      // console.log(strCode)
-    }
-  });
-  //$FlowFixMe
-  let code = template.format(moduleName, strCodes.join('\n'), author);
-  console.log(code);
-  fs.writeFileSync(output, code);
+        if (fileName) {
+            //$FlowFixMe
+            strCodes.push(
+                "    {0}: require('{1}/{2}'),".format(
+                    fileName,
+                    requirePath,
+                    file,
+                ),
+            );
+            // console.log(strCode)
+        }
+    });
+    //$FlowFixMe
+    let code = template.format(moduleName, strCodes.join('\n'), author);
+    console.log(code);
+    fs.writeFileSync(output, code);
 });
